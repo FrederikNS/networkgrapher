@@ -73,6 +73,8 @@ public class Network {
                     n.removeLNEdgeTo(e);
                 }
                 return min_capacity;
+            } else {
+                n.removeLNEdgeTo(e);
             }
         }
         return 0;
