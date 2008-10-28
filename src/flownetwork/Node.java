@@ -9,12 +9,25 @@ public class Node {
 	private HashMap<Node, Capacity> edges_out;
 	private HashSet<Node> ln_out_edges;
 	private int level;
-	
+	private int enumeration;
+
 	public Node() {
 		edges_in = new HashMap<Node, Capacity>();
 		edges_out = new HashMap<Node, Capacity>();
 		ln_out_edges = new HashSet<Node>();
 		level = 0;
+	}
+	
+	public Node(int index) {
+		edges_in = new HashMap<Node, Capacity>();
+		edges_out = new HashMap<Node, Capacity>();
+		ln_out_edges = new HashSet<Node>();
+		level = 0;
+		enumeration = index;
+	}
+	
+	public int getEnumeration() {
+		return enumeration;
 	}
 	
 	public Collection<Node> getIngoingEdges() {
@@ -73,9 +86,9 @@ public class Node {
 		ln_out_edges.add(n);
 	}
         
-        public void removeLNEdgeTo(Node e) {
-            ln_out_edges.remove(e);
-        }
+    public void removeLNEdgeTo(Node e) {
+        ln_out_edges.remove(e);
+    }
 	
 	public HashSet<Node> getLNEdges() {
 		return ln_out_edges;
