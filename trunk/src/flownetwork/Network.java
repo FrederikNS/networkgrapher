@@ -55,7 +55,7 @@ public class Network {
         }
     }
 
-    public int LNHax(Node n, int min_capacity) {
+    public int augmentLNPath(Node n, int min_capacity) {
         if (n == sink) {
             return min_capacity;
         }
@@ -64,7 +64,7 @@ public class Network {
         }
         HashSet<Node> lnedges = (HashSet<Node>)n.getLNEdges().clone();
         for (Node e : lnedges) {
-            int c = LNHax(e, Math.min(min_capacity, n.getCapacityOfEdgeTo(e)));
+            int c = augmentLNPath(e, Math.min(min_capacity, n.getCapacityOfEdgeTo(e)));
             if (c != 0) {
             	min_capacity = Math.min(c, min_capacity);
                 n.addLoadToEdgeTo(e, min_capacity);
@@ -80,13 +80,13 @@ public class Network {
     }
 
     public boolean augmentLNPaths() {
-        int to_add = LNHax(source, Integer.MAX_VALUE);
+        int to_add = augmentLNPath(source, Integer.MAX_VALUE);
         if (to_add == 0) {
             return false;
         }
         while (to_add > 0) {
             maxflow += to_add;
-            to_add = LNHax(source, Integer.MAX_VALUE);
+            to_add = augmentLNPath(source, Integer.MAX_VALUE);
         }
         return true;
     }
