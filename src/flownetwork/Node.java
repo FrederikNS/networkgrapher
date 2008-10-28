@@ -77,7 +77,7 @@ public class Node {
             ln_out_edges.remove(e);
         }
 	
-	public Collection<Node> getLNEdges() {
+	public HashSet<Node> getLNEdges() {
 		return ln_out_edges;
 	}
 
