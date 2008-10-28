@@ -1,4 +1,4 @@
-package network;
+package flownetwork;
 
 import java.io.BufferedReader;
 //import java.io.File;
@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.StringTokenizer;
 
 public class NetworkReader {
@@ -25,8 +24,6 @@ public class NetworkReader {
 		for(int i = 0; i < num_nodes; i++) //necesarry? Probably
 			nodes[i] = new Node();
 
-		HashSet<Edge> edges = new HashSet<Edge>();
-
 		int node1, node2, capacity;
 		// read the edges
 		for (int i = 0; i < num_edges; i++) {
@@ -35,15 +32,12 @@ public class NetworkReader {
 			node1 = Integer.parseInt(stok.nextToken().trim());
 			node2 = Integer.parseInt(stok.nextToken().trim());
 			capacity = Integer.parseInt(stok.nextToken().trim());
- 
-			Edge e = new Edge(nodes[node1], nodes[node2], capacity);
 
-			edges.add(e);
-			nodes[node1].addOutgoingEdge(e);
-			nodes[node2].addIngoingEdge(e);
+			nodes[node1].addOutgoingEdge(nodes[node2], capacity);
+			nodes[node2].addIngoingEdge(nodes[node1], capacity);
 		}
 		br.close();
-		return new Network(Arrays.asList(nodes), edges, nodes[source_index], nodes[sink_index]);
+		return new Network(Arrays.asList(nodes), nodes[source_index], nodes[sink_index]);
 	}
 }
 
