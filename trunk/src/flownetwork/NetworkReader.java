@@ -22,7 +22,7 @@ public class NetworkReader {
 
 		Node nodes[] = new Node[num_nodes];
 		for(int i = 0; i < num_nodes; i++) //necesarry? Probably
-			nodes[i] = new Node();
+			nodes[i] = new Node(i);
 
 		int node1, node2, capacity;
 		// read the edges
