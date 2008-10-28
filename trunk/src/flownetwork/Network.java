@@ -53,21 +53,20 @@ public class Network {
                 }
             }
         }
-    //System.out.println(""+sink.getLevel());
     }
 
     public int LNHax(Node n, int min_capacity) {
-        int c;
-        if (n.getLNEdges().size() == 0) {
-            return 0;
-        }
         if (n == sink) {
             return min_capacity;
         }
-        for (Node e : n.getLNEdges()) {
-            c = LNHax(e, Math.min(min_capacity, n.getCapacityOfEdgeTo(e)));
+        if (n.getLNEdges().size() == 0) {
+            return 0;
+        }
+        HashSet<Node> lnedges = (HashSet<Node>)n.getLNEdges().clone();
+        for (Node e : lnedges) {
+            int c = LNHax(e, Math.min(min_capacity, n.getCapacityOfEdgeTo(e)));
             if (c != 0) {
-                min_capacity = Math.min(c, min_capacity);
+            	min_capacity = Math.min(c, min_capacity);
                 n.addLoadToEdgeTo(e, min_capacity);
                 if (n.getCapacityOfEdgeTo(n) == 0) {
                     n.removeLNEdgeTo(e);
@@ -86,8 +85,8 @@ public class Network {
             return false;
         }
         while (to_add > 0) {
-            to_add = LNHax(source, Integer.MAX_VALUE);
             maxflow += to_add;
+            to_add = LNHax(source, Integer.MAX_VALUE);
         }
         return true;
     }
@@ -95,7 +94,6 @@ public class Network {
     int calculateMaxFlow() {
         maxflow = 0;
         boolean loop = true;
-
         for (Node n : nodes) {
             n.resetLNEdges();
         }
