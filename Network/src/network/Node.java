@@ -1,38 +1,32 @@
-package network;
+package flownetwork;
 
-import java.util.HashSet;
+import java.util.HashMap;
 
 public class Node {
-	private HashSet<Edge> edges_in;
-	private HashSet<Edge> edges_out;
+	private HashMap<Node, Integer> edges_in;
+	private HashMap<Node, Integer> edges_out;
 	private int level;
 	
 	public Node() {
-		edges_in = new HashSet<Edge>();
-		edges_out = new HashSet<Edge>();
+		edges_in = new HashMap<Node, Integer>();
+		edges_out = new HashMap<Node, Integer>();
 		level = 0;
 	}
-
-	public Node(HashSet<Edge> edges_in, HashSet<Edge> edges_out) {
-		this.edges_in = edges_in;
-		this.edges_out = edges_out;
-		level = 0;
-	}	
 	
-	public HashSet<Edge> getIngoingEdges() {
+	public HashMap<Node, Integer> getIngoingEdges() {
 		return edges_in;
 	}
 	
-	public HashSet<Edge> getOutgoingEdges() {
+	public HashMap<Node, Integer> getOutgoingEdges() {
 		return edges_out;
 	}
 	
-	public void addIngoingEdge(Edge e) {
-		edges_in.add(e);
+	public void addIngoingEdge(Node n, int capacity) {
+		edges_in.put(n, capacity);
 	}
 
-	public void addOutgoingEdge(Edge e) {
-		edges_out.add(e);
+	public void addOutgoingEdge(Node n, int capacity) {
+		edges_out.put(n, capacity);
 	}
 	
 	public int getLevel() {
