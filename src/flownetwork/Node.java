@@ -72,14 +72,18 @@ public class Node {
 	public void addLNEdge(Node n) {
 		ln_out_edges.add(n);
 	}
+        
+        public void removeLNEdgeTo(Node e) {
+            ln_out_edges.remove(e);
+        }
 	
 	public Collection<Node> getLNEdges() {
 		return ln_out_edges;
 	}
 
 	public void addLoadToEdgeTo(Node e, int l) {
-		if(edges_out.containsKey(e))
-			edges_out.get(e).addLoad(l);
+		if(edges_in.containsKey(e))
+			edges_in.get(e).addLoad(-l);
 		if(edges_out.containsKey(e))
 			edges_out.get(e).addLoad(l);
 	}
