@@ -3,10 +3,13 @@ package flownetwork;
 public class Test {
 	public static void main(String[] args) {
 		try {
-			//Network n = NetworkReader.readFile("c:\\testnetworks\\proj2009.fln");
-			Network n = NetworkReader.readFile("FlowNetworks/Random20-10697.fln");
-            int c = n.calculateMaxFlow();
-            System.out.println(c+"");
+			if(args.length > 0) {
+				Network n = NetworkReader.readFile(args[0]);
+				System.out.println("Max flow: " + n.calculateMaxFlow());
+			}
+			else {
+				System.out.println("Usage: Give the input FLN network as argument");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
