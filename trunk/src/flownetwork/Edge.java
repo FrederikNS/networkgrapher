@@ -1,4 +1,4 @@
-package network;
+package flownetwork;
 
 public class Edge {
 	private Node node_source;
