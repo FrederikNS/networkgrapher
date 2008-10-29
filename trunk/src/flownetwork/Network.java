@@ -2,22 +2,20 @@ package flownetwork;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
 public class Network {
-
     private HashSet<Node> nodes;
     private Node source, sink;
-    int maxflow;
 
     public Network(Collection<Node> nodes, Node source, Node sink) {
         this.nodes = new HashSet<Node>(nodes);
         this.source = source;
         this.sink = sink;
-        maxflow = 0;
     }
 
     public HashSet<Node> getNodes() {
@@ -55,17 +53,22 @@ public class Network {
         
         while (!queue.isEmpty()) {
             Node n = queue.poll();
+//            System.out.print("\nBFS " + n.getEnumeration() + "; ");
             if (n.getLevel() < sink.getLevel()) {
                 //OPTIMIZATION: Iterate through the outgoing and ingoing edges
                 //separately to avoid concatenating the list in each iteration
                 for (Node d : n.getEdges()) {
-                    if (n.getCapacityOfEdgeTo(d) > 0 && d.getLevel() > n.getLevel() + 1) {
-                        d.setLevel(n.getLevel() + 1);
+                    if (n.getCapacityOfEdgeTo(d) > 0) {
+                    	if(d.getLevel() > n.getLevel() + 1) {
+//                    		System.out.print(d.getEnumeration() + ", ");
+                    		d.setLevel(n.getLevel() + 1);
+                            queue.add(d);
+                    	}
                         n.addLNEdge(d);
-                        queue.add(d);
                     }
                 }
             }
+//            System.out.println();
         }
     }
     
@@ -88,41 +91,56 @@ public class Network {
     	System.out.println("Level "+sink.getLevel()+" contains nodes: "+sink.getEnumeration()+".\n");
     }
     
+    public void printLN() {
+    	for(Node n : nodes) {
+    		if(n.getLevel() != Integer.MAX_VALUE) {
+    			System.out.print("Node " + n.getEnumeration() + ": ");
+    			for(Node e : n.getLNEdges()) {
+    				System.out.print(e.getEnumeration() + ", ");
+    			}
+    			System.out.println();
+    		}
+    	}
+    }
+    
     @SuppressWarnings("unchecked")
 	public int augmentLNPath(Node n, int min_capacity) {
         if (n == sink) {
             return min_capacity;
         }
-        if (n.getLNEdges().size() == 0) {
-            return 0;
-        }
-        HashSet<Node> lnedges = (HashSet<Node>)n.getLNEdges().clone();
+        
+        int added_load = 0;
+        ArrayList<Node> lnedges = (ArrayList<Node>)n.getLNEdges().clone();
+        Collections.shuffle(lnedges);
         for (Node e : lnedges) {
-            int c = augmentLNPath(e, Math.min(min_capacity, n.getCapacityOfEdgeTo(e)));
-            if (c != 0) {
-            	min_capacity = Math.min(c, min_capacity);
-                n.addLoadToEdgeTo(e, min_capacity);
-                if (n.getCapacityOfEdgeTo(n) == 0) {
-                    n.removeLNEdgeTo(e);
-                }
-                return min_capacity;
-            } else {
+//        	System.out.println("Went into: " + n.getEnumeration() + ", " + e.getEnumeration());
+            int max_path_load = augmentLNPath(e, Math.min(min_capacity, n.getCapacityOfEdgeTo(e)));
+//        	System.out.println(n.getEnumeration() + ", " + e.getEnumeration() + " got max path load: " + max_path_load);
+        	min_capacity -= max_path_load;
+            n.addLoadToEdgeTo(e, max_path_load);
+            added_load += max_path_load;
+            if (n.getCapacityOfEdgeTo(e) == 0) {
+//            	System.out.println("Removed: " + n.getEnumeration() + ", " + e.getEnumeration());
                 n.removeLNEdgeTo(e);
             }
         }
-        return 0;
+        return added_load;
     }
 
     public boolean augmentLNPaths() {
-        int to_add = augmentLNPath(source, Integer.MAX_VALUE);
-        if (to_add == 0) {
-            return false;
-        }
-        while (to_add > 0) {
-            maxflow += to_add;
-            to_add = augmentLNPath(source, Integer.MAX_VALUE);
-        }
-        return true;
+    	boolean changed = false;
+//    	int c = 0;
+    	do {
+        	int initial_maxflow = getMaxFlow();
+    		System.out.println("Added load: " +  augmentLNPath(source, Integer.MAX_VALUE) + "\n");
+    		if(initial_maxflow != getMaxFlow()) {
+    			changed = true;
+//    			c++;
+//    			System.out.print(c);
+    		}
+    		else break;
+    	} while (true);
+    	return changed;
     }
     
     public void printHeaderInfo() {
@@ -130,22 +148,30 @@ public class Network {
     }
 
     int calculateMaxFlow() {
-        maxflow = 0;
-        int i = 1;
-        boolean loop = true;
+        int i = 0;
         for (Node n : nodes) {
             n.resetLNEdges();
         }
-        while (loop) {
+        calculateLeveledNetwork();
+        printLN();
+        while (augmentLNPaths()) {
             calculateLeveledNetwork();
-            if(sink.getLevel() != Integer.MAX_VALUE) {
+//            printLN();
+            /*if(sink.getLevel() != Integer.MAX_VALUE) {
             	System.out.println("Leveled network in iteration " + i + ":");
-            	i++;
             	printLeveledNetwork();
-            }
-            System.gc();
-            loop = augmentLNPaths();
+            }*/
+            i++;
         }
-        return maxflow;
+        System.out.println("\nIterations: " + i + ".");
+        return getMaxFlow();
+    }
+    
+    public int getMaxFlow() {
+    	int maxflow = 0;
+    	for(Node n : source.getOutgoingEdges()) {
+    		maxflow += source.getLoadToEdge(n);
+    	}
+    	return maxflow;
     }
 }
