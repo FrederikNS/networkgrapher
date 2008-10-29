@@ -1,5 +1,6 @@
 package flownetwork;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,21 +8,21 @@ import java.util.HashSet;
 public class Node {
 	private HashMap<Node, Capacity> edges_in;
 	private HashMap<Node, Capacity> edges_out;
-	private HashSet<Node> ln_out_edges;
+	private ArrayList<Node> ln_out_edges;
 	private int level;
 	private int enumeration;
 
 	public Node() {
 		edges_in = new HashMap<Node, Capacity>();
 		edges_out = new HashMap<Node, Capacity>();
-		ln_out_edges = new HashSet<Node>();
+		ln_out_edges = new ArrayList<Node>();
 		level = 0;
 	}
 	
 	public Node(int index) {
 		edges_in = new HashMap<Node, Capacity>();
 		edges_out = new HashMap<Node, Capacity>();
-		ln_out_edges = new HashSet<Node>();
+		ln_out_edges = new ArrayList<Node>();
 		level = 0;
 		enumeration = index;
 	}
@@ -79,10 +80,11 @@ public class Node {
 	}
 	
 	public void resetLNEdges() {
-		ln_out_edges = new HashSet<Node>();
+		ln_out_edges = new ArrayList<Node>();
 	}
 	
 	public void addLNEdge(Node n) {
+		if(ln_out_edges.contains(n)) return;
 		ln_out_edges.add(n);
 	}
         
@@ -90,7 +92,7 @@ public class Node {
         ln_out_edges.remove(e);
     }
 	
-	public HashSet<Node> getLNEdges() {
+	public ArrayList<Node> getLNEdges() {
 		return ln_out_edges;
 	}
 
@@ -100,4 +102,22 @@ public class Node {
 		if(edges_out.containsKey(e))
 			edges_out.get(e).addLoad(l);
 	}
+
+	public int numEdges() {
+		return edges_in.size() + edges_out.size();
+	}
+	
+	public boolean containsEdgeTo(Node n) {
+		return edges_out.containsKey(n);
+	}
+
+	public boolean containsEdgeFrom(Node n) {
+		return edges_out.containsKey(n);
+	}
+
+	public int getLoadToEdge(Node n) {
+		if(!edges_out.containsKey(n)) return 0;
+		return edges_out.get(n).getLoad();
+	}
+
 }

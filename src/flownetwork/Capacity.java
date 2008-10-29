@@ -5,6 +5,7 @@ public class Capacity {
 	
 	public Capacity(int c) {
 		capacity = c;
+		load = 0;
 	}
 	
 	int getInitialCapacity() {

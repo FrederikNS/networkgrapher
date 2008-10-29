@@ -1,12 +1,16 @@
 package flownetwork;
 
+import java.io.IOException;
+
 public class Test {
 	public static void main(String[] args) {
 		try {
 			//if(args.length > 0) {
 			if(true) {
 				//String filename = args[0];
-				String filename = "Flownetworks/grid20-2.fln"; 
+				String filename = "Flownetworks/complRand000-415.fln"; 
+				//String filename = "Flownetworks/123-4.fln";
+				//String filename = "Flownetworks/par-4.fln";
 				Network n = NetworkReader.readFile(filename);
 				System.out.println("Network file: " + filename);
 				n.printHeaderInfo();
@@ -16,8 +20,20 @@ public class Test {
 			else {
 				System.out.println("Usage: Give the input FLN network as argument");
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		}
+		catch (IOException e) {
+			System.out.println("IO Exception.");
+			if(e.getMessage()==null)
+				e.printStackTrace();
+			else
+				System.out.println(e.getMessage());
+		}
+		catch (Exception e) {
+			System.out.println("Error!");
+			if(e.getMessage()==null)
+				e.printStackTrace();
+			else
+				System.out.println(e.getMessage());
 		}
 	}
 }
