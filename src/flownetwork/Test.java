@@ -8,7 +8,7 @@ public class Test {
 			//if(args.length > 0) {
 			if(true) {
 				//String filename = args[0];
-				String filename = "Flownetworks/complRand000-415.fln"; 
+				String filename = "Flownetworks/gridRand000-75.fln"; 
 				//String filename = "Flownetworks/123-4.fln";
 				//String filename = "Flownetworks/par-4.fln";
 				Network n = NetworkReader.readFile(filename);
