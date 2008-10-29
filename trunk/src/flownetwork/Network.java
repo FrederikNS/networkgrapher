@@ -102,7 +102,7 @@ public class Network {
     }
     
     @SuppressWarnings("unchecked")
-	public int augmentLNPath(Node n, int min_capacity) {
+	public int blockLN(Node n, int min_capacity) {
         if (n == sink) {
             return min_capacity;
         }
@@ -113,8 +113,8 @@ public class Network {
         //Collections.shuffle(lnedges);
         for (Node e : lnedges) {
         	int e_cap = n.getCapacityOfEdgeTo(e);
-        	if(e_cap > 0) {
-	            int max_path_load = augmentLNPath(e, Math.min(min_capacity, e_cap));
+        	if(e_cap > 0 && min_capacity > 0) {
+	            int max_path_load = blockLN(e, Math.min(min_capacity, e_cap));
 	        	min_capacity -= max_path_load;
 	        	e_cap -= max_path_load;
 	            n.addLoadToEdgeTo(e, max_path_load);
@@ -131,7 +131,7 @@ public class Network {
 
     public boolean augmentLNPaths() {
     	int initial_maxflow = getMaxFlow();
-    	augmentLNPath(source, Integer.MAX_VALUE);
+    	blockLN(source, Integer.MAX_VALUE);
 		if(initial_maxflow != getMaxFlow())
 			return true;
 		return false;
@@ -156,7 +156,7 @@ public class Network {
             calculateLeveledNetwork();
             if(sink.getLevel() != Integer.MAX_VALUE) {
             	System.out.println("Leveled network in iteration " + i + ":");
-            	//printLeveledNetwork();
+            	printLeveledNetwork();
             }
             i++;
         }
