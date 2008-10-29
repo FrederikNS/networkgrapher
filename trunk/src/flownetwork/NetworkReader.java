@@ -70,8 +70,12 @@ public class NetworkReader {
 			if(node1 == sink_index) warning("Edge from sink: " + line);
 			if(node1 >= num_nodes || node2 >= num_nodes) error("Node value out of bound in edge: " + line);
 			if(nodes[node1].containsEdgeTo(nodes[node2])) error("The edge "+line+" defines a secondary edge between two nodes. There can be only one.");
-			nodes[node1].addOutgoingEdge(nodes[node2], capacity);
-			nodes[node2].addIngoingEdge(nodes[node1], capacity);
+			if(capacity == 0) {
+				warning("Encountered zero-capacity at edge: " + line);
+			} else {
+				nodes[node1].addOutgoingEdge(nodes[node2], capacity);
+				nodes[node2].addIngoingEdge(nodes[node1], capacity);
+			}
 		}
 		if(stok.hasMoreTokens()) warning("There could be more edges in the file than the header specifies.");
 		TreeSet<Integer> lone_nodes = new TreeSet<Integer>();

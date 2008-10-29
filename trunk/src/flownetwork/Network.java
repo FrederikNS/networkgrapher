@@ -45,6 +45,7 @@ public class Network {
     public void calculateLeveledNetwork() {
         for (Node n : nodes) {
             n.setLevel(Integer.MAX_VALUE);
+            n.resetLNEdges();
         }
 
         LinkedList<Node> queue = new LinkedList<Node>();
@@ -110,17 +111,14 @@ public class Network {
         }
         
         int added_load = 0;
-        ArrayList<Node> lnedges = (ArrayList<Node>)n.getLNEdges().clone();
+        ArrayList<Node> lnedges = new ArrayList<Node>(n.getLNEdges());
         Collections.shuffle(lnedges);
         for (Node e : lnedges) {
-//        	System.out.println("Went into: " + n.getEnumeration() + ", " + e.getEnumeration());
             int max_path_load = augmentLNPath(e, Math.min(min_capacity, n.getCapacityOfEdgeTo(e)));
-//        	System.out.println(n.getEnumeration() + ", " + e.getEnumeration() + " got max path load: " + max_path_load);
         	min_capacity -= max_path_load;
             n.addLoadToEdgeTo(e, max_path_load);
             added_load += max_path_load;
             if (n.getCapacityOfEdgeTo(e) == 0) {
-//            	System.out.println("Removed: " + n.getEnumeration() + ", " + e.getEnumeration());
                 n.removeLNEdgeTo(e);
             }
         }
@@ -128,19 +126,11 @@ public class Network {
     }
 
     public boolean augmentLNPaths() {
-    	boolean changed = false;
-//    	int c = 0;
-    	do {
-        	int initial_maxflow = getMaxFlow();
-    		System.out.println("Added load: " +  augmentLNPath(source, Integer.MAX_VALUE) + "\n");
-    		if(initial_maxflow != getMaxFlow()) {
-    			changed = true;
-//    			c++;
-//    			System.out.print(c);
-    		}
-    		else break;
-    	} while (true);
-    	return changed;
+    	int initial_maxflow = getMaxFlow();
+    	augmentLNPath(source, Integer.MAX_VALUE);
+		if(initial_maxflow != getMaxFlow())
+			return true;
+		return false;
     }
     
     public void printHeaderInfo() {
@@ -153,17 +143,20 @@ public class Network {
             n.resetLNEdges();
         }
         calculateLeveledNetwork();
-        printLN();
+        if(sink.getLevel() != Integer.MAX_VALUE) {
+        	System.out.println("Leveled network in iteration " + i + ":");
+        	printLeveledNetwork();
+        	i++;
+        }
         while (augmentLNPaths()) {
             calculateLeveledNetwork();
-//            printLN();
-            /*if(sink.getLevel() != Integer.MAX_VALUE) {
+            if(sink.getLevel() != Integer.MAX_VALUE) {
             	System.out.println("Leveled network in iteration " + i + ":");
             	printLeveledNetwork();
-            }*/
+            }
             i++;
         }
-        System.out.println("\nIterations: " + i + ".");
+        System.out.println("\nIterations: " + (i-1) + ".");
         return getMaxFlow();
     }
     
