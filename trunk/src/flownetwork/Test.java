@@ -5,16 +5,16 @@ import java.io.IOException;
 public class Test {
 	public static void main(String[] args) {
 		try {
-			//if(args.length > 0) {
-			if(true) {
-				//String filename = args[0];
+			if(args.length > 0) {
+			//if(true) {
+				String filename = args[0];
 				//String filename = "Flownetworks/gridRand001-42.fln"; 
 				//String filename = "Flownetworks/complRand000-237.fln";
 				//String filename = "Flownetworks/123-4.fln";
 				//String filename = "Flownetworks/par-4.fln";
 				//String filename = "Flownetworks/random500-250016.fln";
 				//String filename = "Flownetworks/proj2009.fln";
-				String filename = "Flownetworks/gridrand004-122.fln";
+				//String filename = "Flownetworks/gridrand004-122.fln";
 				Network n = NetworkReader.readFile(filename);
 				System.out.println("Network file: " + filename);
 				n.printHeaderInfo();

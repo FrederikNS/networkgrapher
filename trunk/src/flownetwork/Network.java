@@ -2,7 +2,6 @@ package flownetwork;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -115,7 +114,7 @@ public class Network {
         for (Node e : lnedges) {
         	int e_cap = n.getCapacityOfEdgeTo(e);
         	if(e_cap > 0) {
-	            int max_path_load = augmentLNPath(e, Math.min(min_capacity, n.getCapacityOfEdgeTo(e)));
+	            int max_path_load = augmentLNPath(e, Math.min(min_capacity, e_cap));
 	        	min_capacity -= max_path_load;
 	        	e_cap -= max_path_load;
 	            n.addLoadToEdgeTo(e, max_path_load);
@@ -157,7 +156,7 @@ public class Network {
             calculateLeveledNetwork();
             if(sink.getLevel() != Integer.MAX_VALUE) {
             	System.out.println("Leveled network in iteration " + i + ":");
-            	printLeveledNetwork();
+            	//printLeveledNetwork();
             }
             i++;
         }
