@@ -54,22 +54,20 @@ public class Network {
         
         while (!queue.isEmpty()) {
             Node n = queue.poll();
-//            System.out.print("\nBFS " + n.getEnumeration() + "; ");
             if (n.getLevel() < sink.getLevel()) {
                 //OPTIMIZATION: Iterate through the outgoing and ingoing edges
                 //separately to avoid concatenating the list in each iteration
                 for (Node d : n.getEdges()) {
                     if (n.getCapacityOfEdgeTo(d) > 0) {
-                    	if(d.getLevel() > n.getLevel() + 1) {
-//                    		System.out.print(d.getEnumeration() + ", ");
+                    	if(n.getLevel() + 1 < d.getLevel()) {
                     		d.setLevel(n.getLevel() + 1);
                             queue.add(d);
                     	}
-                        n.addLNEdge(d);
+                    	if(n.getLevel() < d.getLevel())
+                    		n.addLNEdge(d);
                     }
                 }
             }
-//            System.out.println();
         }
     }
     
@@ -109,18 +107,25 @@ public class Network {
         if (n == sink) {
             return min_capacity;
         }
+        if(min_capacity == 0) return 0;
         
         int added_load = 0;
         ArrayList<Node> lnedges = new ArrayList<Node>(n.getLNEdges());
-        Collections.shuffle(lnedges);
+        //Collections.shuffle(lnedges);
         for (Node e : lnedges) {
-            int max_path_load = augmentLNPath(e, Math.min(min_capacity, n.getCapacityOfEdgeTo(e)));
-        	min_capacity -= max_path_load;
-            n.addLoadToEdgeTo(e, max_path_load);
-            added_load += max_path_load;
-            if (n.getCapacityOfEdgeTo(e) == 0) {
+        	int e_cap = n.getCapacityOfEdgeTo(e);
+        	if(e_cap > 0) {
+	            int max_path_load = augmentLNPath(e, Math.min(min_capacity, n.getCapacityOfEdgeTo(e)));
+	        	min_capacity -= max_path_load;
+	        	e_cap -= max_path_load;
+	            n.addLoadToEdgeTo(e, max_path_load);
+	            added_load += max_path_load;
+	            if (max_path_load == 0) {
+	                n.removeLNEdgeTo(e);
+	            }
+        	}
+        	if(e_cap == 0) 
                 n.removeLNEdgeTo(e);
-            }
         }
         return added_load;
     }
@@ -138,7 +143,7 @@ public class Network {
     }
 
     int calculateMaxFlow() {
-        int i = 0;
+        int i = 1;
         for (Node n : nodes) {
             n.resetLNEdges();
         }
@@ -156,7 +161,7 @@ public class Network {
             }
             i++;
         }
-        System.out.println("\nIterations: " + (i-1) + ".");
+        System.out.println("\nIterations: " + (i-2) + ".");
         return getMaxFlow();
     }
     
